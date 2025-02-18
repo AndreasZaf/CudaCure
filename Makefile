@@ -22,12 +22,12 @@ CUDAFLAGS += -g
 # Compilation Rules
 #
 
-PROG_OMP	= cluster_omp.exe
+PROG_OMP	= cluster_cuda.exe
 HDRS_OMP	= alloc.h cluster.h help.h CudaCheckError/cudacheckerror.cuh CudaTimer/cudatimer.cuh CudaKernelsHostDeviceFunctions/KernelsHostDeviceFunctions.cuh Timers/Timers.h     
-SRCS_OMP	= alloc.c cluster_omp.c    
-OBJS_OMP	= alloc.o cluster_omp.o    
+SRCS_OMP	= alloc.c cluster_cuda.c    
+OBJS_OMP	= alloc.o cluster_cuda.o    
 
-CUOBJS_OMP      = alloc.o cluster_omp.o cudacheckerror.o cudatimer.o KernelsHostDeviceFunctions.o AllDataGpu.o SingleCudaCure.o CudaCurePart.o UnifiedMemory.o PrefetchAsyncUnifiedMemory.o PinnedMemoryCMH.o PinnedMemoryCHA.o MappedPinnedMemory.o CudaCheckers.o    
+CUOBJS_OMP      = alloc.o cluster_cuda.o cudacheckerror.o cudatimer.o KernelsHostDeviceFunctions.o AllDataGpu.o SingleCudaCure.o CudaCurePart.o UnifiedMemory.o PrefetchAsyncUnifiedMemory.o PinnedMemoryCMH.o PinnedMemoryCHA.o MappedPinnedMemory.o CudaCheckers.o    
 
 all: $(PROG_OMP)
 
@@ -37,9 +37,8 @@ $(PROG_OMP):	$(CUOBJS_OMP)
 	rm -f *.o
 
 alloc.o: alloc.c $(HDRS_OMP)
-cluster_omp.o: cluster_omp.c $(HDRS_OMP)
-	$(NVCC) -c cluster_omp.c
-assign.o: assign.c
+cluster_cuda.o: cluster_cuda.c $(HDRS_OMP)
+	$(NVCC) -c cluster_cuda.c
     
 cudacheckerror.o: CudaCheckError/cudacheckerror.cu 
 	$(NVCC) -c CudaCheckError/cudacheckerror.cu
@@ -127,7 +126,7 @@ cleanI:
 # Run and create 4 clusters for 200 2d points 
 CheckRun:
 	for  Mem  in  $(MemoryTypes)  ;  do  \
-   ./cluster_omp.exe -k 4 -p 200 -d 2 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 4 -p 200 -d 2 -x  ex2.dat -T $$Mem;  \
    echo  "\n\n";  \
  done;  \
  echo  "\n";  \
@@ -143,21 +142,21 @@ CheckRun:
 # Run for different memory types and number of 20 d points 
 TimeRun:
 	for  Mem  in  $(MemoryTypes)  ;  do  \
-   ./cluster_omp.exe -k 5 -p 500 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 5 -p 500 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 10 -p 1000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 10 -p 1000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 15 -p 1500 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 15 -p 1500 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 30 -p 3000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 30 -p 3000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 60 -p 6000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 60 -p 6000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 120 -p 12000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 120 -p 12000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 240 -p 24000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 240 -p 24000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
-   ./cluster_omp.exe -k 480 -p 48000 -d 20 -x  ex2.dat -T $$Mem;  \
+   ./cluster_cuda.exe -k 480 -p 48000 -d 20 -x  ex2.dat -T $$Mem;  \
    echo  "\n";  \
  done;  \
  rm -f  $(SERIALFOLDER)/*Results.txt  \
